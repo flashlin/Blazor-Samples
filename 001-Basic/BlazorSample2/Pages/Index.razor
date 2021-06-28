@@ -1,0 +1,145 @@
+﻿@page "/"
+@using BlazorSample2.Models
+@using BlazorSample2.Components
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<SurveyPrompt Title="How is Blazor working for you?" />
+
+<form>
+	<div class="form-group">
+		<label>TextBox Demo</label>
+		<input type="text" @bind="_myTextBoxValue" @bind:event="oninput" />
+	</div>
+	<div class="form-group">
+		Hi, you are keying '@_myTextBoxValue'
+	</div>
+</form>
+
+<form>
+	<div class="form-group">
+		<label>Select Demo</label>
+		<select @bind="_myListSelected">
+			@foreach (var option in _myList)
+			{
+				<option value="@option.Value">@option.Text</option>
+			}
+		</select>
+	</div>
+	<div class="form-group">
+		Hi, you selected '@GetSelectedText()'
+	</div>
+</form>
+
+<form>
+	<div class="form-group">
+		<label>Radio Demo</label>
+		@foreach (var option in _myList)
+		{
+			<input name="myRadio1"
+					 type="radio"
+					 value="@option.Value"
+					 checked="@_myListSelected.Equals(option.Value)"
+					 @onchange="HandleRadioOnChange" />
+			@option.Text
+		}
+	</div>
+	<div class="form-group">
+		you selected '@_myListSelected'
+	</div>
+</form>
+
+<form>
+	<div class="form-group">
+		<label>TextArea Demo</label>
+		<textarea @bind="_myTextBoxValue" @bind:event="oninput" />
+		<button type="button" @onclick="HandleClickClear">Clear</button>
+	</div>
+	<div class="form-group">
+		Hi, TextArea is '@_myTextBoxValue'
+	</div>
+</form>
+
+<form>
+	<div class="form-group">
+		<label>Use MySelectList Component Demo</label>
+		<MySelectList @bind-Items="_myList"
+						  @bind-SelectedValue="_myListSelected" />
+	</div>
+	<div class="form-group">
+		Hi, '@_myListSelected'
+	</div>
+</form>
+
+<form>
+	<div class="form-group">
+		<label>GET WEBApi Demo</label>
+		<button type="button" @onclick="CallGetWebApi">GET</button>
+	</div>
+	<div>
+		GET Resp = '@_jsonResp'
+	</div>
+</form>
+
+<form>
+	<div class="form-group">
+		<label>Inject Custom Object Demo</label>
+		'@_myService.GetHello()'
+	</div>
+</form>
+
+@code {
+	string _myTextBoxValue;
+
+	List<MySelectOption> _myList = new List<MySelectOption>()
+{
+		new MySelectOption()
+		{
+			Text = "Jack",
+			Value = 1,
+		},
+		new MySelectOption()
+		{
+			Text = "Mary",
+			Value = 2,
+		},
+		new MySelectOption()
+		{
+			Text = "April",
+			Value = 3,
+		}
+	};
+
+	int _myListSelected = 2;
+
+	private string GetSelectedText()
+	{
+		return _myList.First(x => x.Value == _myListSelected)
+			.Text;
+	}
+
+	private void HandleRadioOnChange(ChangeEventArgs e)
+	{
+		_myListSelected = int.Parse((string)e.Value);
+	}
+
+	private void HandleClickClear()
+	{
+		_myTextBoxValue = "";
+	}
+
+
+	[Inject]
+	HttpClient Http { get; set; }
+	string _jsonResp;
+	private async Task CallGetWebApi()
+	{
+		_jsonResp = await Http.GetStringAsync("https://reqres.in/api/users?page=2");
+	}
+
+	[Inject]
+	IMyInterface _myService { get;set;}
+
+}

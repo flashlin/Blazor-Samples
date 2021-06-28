@@ -1,0 +1,31 @@
+﻿@using BlazorSample2.Models
+
+<select @onchange="HandleChanged">
+	@foreach (var option in Items)
+	{
+		<option value="@option.Value"
+				  selected="@(option.Value==SelectedValue)">
+			@option.Text
+			</option>
+		}
+</select>
+
+@code {
+
+	[Parameter]
+	public List<MySelectOption> Items { get; set; }
+	[Parameter]
+	public EventCallback<List<MySelectOption>> ItemsChanged { get; set; }
+	[Parameter]
+	public int SelectedValue { get; set; }
+	[Parameter]
+	public EventCallback<int> SelectedValueChanged { get; set; }
+
+	private void HandleChanged(ChangeEventArgs e)
+	{
+		var newValue = int.Parse((string)e.Value);
+		SelectedValue = newValue;
+		SelectedValueChanged.InvokeAsync(newValue);
+	}
+
+}
