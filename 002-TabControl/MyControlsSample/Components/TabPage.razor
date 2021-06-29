@@ -1,0 +1,27 @@
+﻿
+@if( Parent.ActivePage == this )
+{
+	<div class="tab-pane fade show active">
+		@ChildContent
+	</div>
+}
+
+@code {
+	[Parameter]
+	public string Title { get; set; }
+	[Parameter]
+	public RenderFragment ChildContent { get; set; }
+
+	[CascadingParameter]
+	TabControl Parent { get; set; }
+
+	protected override Task OnInitializedAsync()
+	{
+		if (Parent == null)
+		{
+			throw new ArgumentNullException(nameof(Parent), "TabPage must exist within a TabControl.");
+		}
+		Parent.AddPage(this);
+		return base.OnInitializedAsync();
+	}
+}
