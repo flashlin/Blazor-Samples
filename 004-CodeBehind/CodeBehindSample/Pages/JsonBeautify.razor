@@ -1,0 +1,14 @@
+﻿@page "/JsonBeautify"
+<h3>JsonBeautify</h3>
+
+<div class="form-group purple-border">
+	<label>Json DATA</label>
+	<textarea class="form-control" rows="5" @bind="_jsonData"></textarea>
+</div>
+
+<button @onclick="ConvertJsonDataToFormattedJsonData">PROCESS</button>
+
+<div class="form-group purple-border">
+	<label>Formatted Json DATA</label>
+	<textarea class="form-control" rows="5" @bind="_formattedJsonData"></textarea>
+</div>
